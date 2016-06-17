@@ -4,12 +4,22 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
+
+    List<HomeWork> mList;
+
+    public static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +36,26 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        Log.d(TAG, "onCreate: 启动起来了");
+
+        initData();
+        initRecyclerView();
+    }
+
+    private void initData() {
+        mList = new ArrayList<HomeWork>();
+        HomeWork homeWork_1 = new HomeWork("2016年6月17日", "文化产业概论", "QQ文件", "期末论文，300字");
+        HomeWork homeWork_2 = new HomeWork("2016年6月18日", "比较文学", "邮箱", "期末论文，300字");
+        mList.add(homeWork_1);
+        mList.add(homeWork_2);
+        Log.d(TAG, "initData: " + mList.size());
+    }
+
+    private void initRecyclerView() {
+        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.base_swipe_list);
+        RecyclerViewAdapter mAdapter = new RecyclerViewAdapter(mList);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
