@@ -9,23 +9,46 @@ import android.widget.TextView;
 import java.util.List;
 
 /**
+ * 自己继承的RecyclerVIew.Adapter，有极高的自定义性
  * Created by Clixin on 2016/6/16.
  */
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>{
+public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
 
+    /**
+     * 填充数据
+     */
     List<HomeWork> mList;
 
+    /**
+     * 构造函数，传递数据
+     *
+     * @param mList 数据
+     */
     public RecyclerViewAdapter(List<HomeWork> mList) {
         this.mList = mList;
     }
 
 
+    /**
+     * 当RecyclerView创建后，自动创建其ViewHolder（需增加重写）
+     *
+     * @param parent   父容器
+     * @param viewType
+     * @return 动态加载自己的ViewHolder
+     */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_base_swipe_item, parent,false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_base_swipe_item, parent, false);
         return new ViewHolder(v);
     }
+
+    /**
+     * ViewHolder与Adapter绑定，这里执行具体逻辑，该显示什么
+     *
+     * @param holder   自己的ViewHolder
+     * @param position 当前游标位置
+     */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.cDeadlineText.setText(mList.get(position).getDeadline());
@@ -35,11 +58,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     }
 
+    /**
+     * @return 返回有多少数据
+     */
     @Override
     public int getItemCount() {
         return mList.size();
     }
 
+    /**
+     * 内部类
+     * 自己继承的ViewHolder，用来缓存View，以及节约资源
+     */
     class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView cDeadline;
@@ -52,7 +82,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         TextView cHomeworkContentText;
 
 
-        public ViewHolder (View itemView) {
+        public ViewHolder(View itemView) {
             super(itemView);
             cDeadline = (TextView) itemView.findViewById(R.id.card_deadline);
             cDeadlineText = (TextView) itemView.findViewById(R.id.text_card_deadline);

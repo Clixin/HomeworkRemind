@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:scrollbars="none"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.homeworkremind.app.AddHomeworkActivity"
+    tools:showIn="@layout/activity_add_homework">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/relative_hand_on"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/add_homework_padding"
+            android:padding="@dimen/activity_vertical_margin">
+
+            <ImageView
+                android:id="@+id/hand_on_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/hand_on_icon" />
+
+            <TextView
+                android:id="@+id/hand_on"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/hand_on_icon"
+                android:text="@string/hand_on" />
+
+            <CheckBox
+                android:id="@+id/e_word"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_vertical_margin"
+                android:layout_toRightOf="@id/hand_on_icon"
+                android:text="电子档" />
+
+            <CheckBox
+                android:id="@+id/via_file"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/e_word"
+                android:layout_marginLeft="@dimen/activity_vertical_margin"
+                android:layout_toRightOf="@id/hand_on_icon"
+                android:checked="true"
+                android:text="传文件"
+                android:visibility="gone" />
+
+            <CheckBox
+                android:id="@+id/p_word"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/via_file"
+                android:layout_marginLeft="@dimen/activity_vertical_margin"
+                android:layout_toRightOf="@id/hand_on_icon"
+                android:text="纸质档" />
+
+            <CheckBox
+                android:id="@+id/via_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/p_word"
+                android:layout_below="@id/e_word"
+                android:layout_marginLeft="@dimen/activity_vertical_margin"
+                android:layout_toRightOf="@id/via_file"
+                android:checked="true"
+                android:text="发邮件"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relative_deadline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/relative_hand_on"
+            android:layout_marginLeft="@dimen/add_homework_padding"
+            android:padding="@dimen/activity_vertical_margin">
+
+            <ImageView
+                android:id="@+id/deadline_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/p_word"
+                android:src="@drawable/deadline_icon" />
+
+            <TextView
+                android:id="@+id/deadline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/deadline_icon"
+                android:text="@string/deadline" />
+
+            <TextView
+                android:id="@+id/deadline_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/deadline_icon"
+                android:clickable="true"
+                android:paddingLeft="@dimen/activity_vertical_margin"
+                android:text="当前日期（点击编辑）" />
+
+            <TextView
+                android:id="@+id/deadline_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/deadline_date"
+                android:layout_toRightOf="@id/deadline_icon"
+                android:clickable="true"
+                android:paddingLeft="@dimen/activity_vertical_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:text="00:00(点击编辑)" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relative_course_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/relative_deadline"
+            android:layout_marginLeft="@dimen/add_homework_padding"
+            android:padding="@dimen/activity_vertical_margin">
+
+            <ImageView
+                android:id="@+id/course_name_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:src="@drawable/course_name_icon" />
+
+            <TextView
+                android:id="@+id/course_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/deadline_time"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/course_name_icon"
+                android:paddingLeft="@dimen/activity_vertical_margin"
+                android:text="文化产业概论\n（根据发布者自动生成）" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/relative_course_name"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/add_homework_padding"
+            android:paddingRight="@dimen/add_homework_padding">
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:elevation="3dp"
+                android:text="返回" />
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/add_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:backgroundTint="@color/colorAccent"
+                android:elevation="3dp"
+                android:text="发布"
+                android:textColor="@color/white" />
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+</ScrollView>

@@ -1,13 +1,26 @@
 package com.homeworkremind.app;
 
 /**
+ * 作业类，包装了作业的属性
  * Created by Clixin on 2016/6/16.
  */
 public class HomeWork {
 
+    /**
+     * 截止日期
+     */
     private String deadline;
+    /**
+     * 提交方式
+     */
     private String wayOfHandOn;
+    /**
+     * 课程名称
+     */
     private String course;
+    /**
+     * 作业要求
+     */
     private String content;
 
     public String getDeadline() {
@@ -47,5 +60,9 @@ public class HomeWork {
         this.course = course;
         this.wayOfHandOn = wayOfHandOn;
         this.content = content;
+    }
+
+    public HomeWork() {
+
     }
 }
