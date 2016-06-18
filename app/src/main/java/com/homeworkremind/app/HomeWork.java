@@ -48,4 +48,8 @@ public class HomeWork {
         this.wayOfHandOn = wayOfHandOn;
         this.content = content;
     }
+
+    public HomeWork() {
+
+    }
 }

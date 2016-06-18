@@ -1,8 +1,10 @@
 package com.homeworkremind.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.PopupWindowCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +20,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     List<HomeWork> mList;
+    RecyclerView mRecyclerView;
+    RecyclerViewAdapter mAdapter;
 
     public static final String TAG = "MainActivity";
 
@@ -32,8 +36,8 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(MainActivity.this, AddHomeworkActivity.class);
+                startActivityForResult(intent, 1);
             }
         });
         Log.d(TAG, "onCreate: 启动起来了");
@@ -52,8 +56,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initRecyclerView() {
-        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.base_swipe_list);
-        RecyclerViewAdapter mAdapter = new RecyclerViewAdapter(mList);
+        mRecyclerView = (RecyclerView) findViewById(R.id.base_swipe_list);
+        mAdapter = new RecyclerViewAdapter(mList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -79,4 +83,24 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case 1 :
+                if(resultCode == RESULT_OK) {
+                    HomeWork homeWork = new HomeWork();
+                    homeWork.setContent(data.getStringExtra("homework_content"));
+                    homeWork.setDeadline(data.getStringExtra("homework_deadline"));
+                    homeWork.setWayOfHandOn(data.getStringExtra("homework_handon"));
+                    mList.add(homeWork);
+                    mAdapter.notifyDataSetChanged();
+
+                    break;
+                }
+
+        }
+    }
+
+
 }
