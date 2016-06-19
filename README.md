@@ -16,7 +16,7 @@ An App can remind you homework
 	* `TimePickerDialog`选择19点以后的小时之后，点确定，会导致数组下标越界
 	原因不知，
 	删除`c.set(hourOfDay, minite)`，即解决
-	
+
 2. 优化选择时间和日期后的文字大小颜色， 比原字体稍微大，稍微暗
 
 3. 添加javadoc注释文档，并格式化代码
