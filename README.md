@@ -25,3 +25,8 @@ An App can remind you homework
 1. 储存Homework，当前问题：退出重进后，添加的课程都没了
 2. 利用文件储存，用count来计数，将每个homework单独存一个文件里，单独取出来
 3. 初步完成
+
+##版本0.04
+1. 点击卡片查看详情
+2. 界面如下
+![demo3.png](http://upload-images.jianshu.io/upload_images/1904896-ccb04900f0761e9c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)

@@ -1,5 +1,6 @@
 package com.homeworkremind.app;
 
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,7 +28,7 @@ import java.util.List;
 /**
  * 主活动 ，用于显示作业列表，Launch Activity
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     /**
      * 用于储存Homework
@@ -45,6 +46,11 @@ public class MainActivity extends AppCompatActivity {
     RecyclerViewAdapter mAdapter;
 
     /**
+     * 显示作业详情对话框
+     */
+    DetailDialogFragment detailDialogFragment;
+
+    /**
      * 用于计数
      */
     private static int count = 0;
@@ -59,13 +65,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AddHomeworkActivity.class);
-                startActivityForResult(intent, 1);
-            }
-        });
+        fab.setOnClickListener(this);
         Log.d(TAG, "onCreate: 启动起来了");
 
         initData();
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void initRecyclerView() {
         mRecyclerView = (RecyclerView) findViewById(R.id.base_swipe_list);
-        mAdapter = new RecyclerViewAdapter(mList);
+        mAdapter = new RecyclerViewAdapter(mList, this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -235,5 +235,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.fab :
+                Intent intent = new Intent(MainActivity.this, AddHomeworkActivity.class);
+                startActivityForResult(intent, 1);
+                break;
+
+        }
+
+    }
 
 }
