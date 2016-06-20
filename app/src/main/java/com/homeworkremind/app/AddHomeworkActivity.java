@@ -214,7 +214,6 @@ public class AddHomeworkActivity extends AppCompatActivity implements View.OnCli
         intent.putExtra("homework_handon", getWayOfHandOn());
         setResult(RESULT_OK, intent);
         finish();
-
     }
 
     /**

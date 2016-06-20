@@ -1,5 +1,6 @@
 package com.homeworkremind.app;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,6 +13,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +43,11 @@ public class MainActivity extends AppCompatActivity {
      * 可滚动View的适配器
      */
     RecyclerViewAdapter mAdapter;
+
+    /**
+     * 用于计数
+     */
+    private static int count = 0;
 
     public static final String TAG = "MainActivity";
 
@@ -67,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         HomeWork homeWork_2 = new HomeWork("2016年6月18日", "比较文学", "邮箱", "期末论文，300字");
         mList.add(homeWork_1);
         mList.add(homeWork_2);
+        loadFormFile();
         Log.d(TAG, "initData: " + mList.size());
     }
 
@@ -126,16 +141,97 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case 1:
                 if (resultCode == RESULT_OK) {
-                    HomeWork homeWork = new HomeWork();
-                    homeWork.setContent(data.getStringExtra("homework_content"));
-                    homeWork.setDeadline(data.getStringExtra("homework_deadline"));
-                    homeWork.setWayOfHandOn(data.getStringExtra("homework_handon"));
-                    mList.add(homeWork);
-                    mAdapter.notifyDataSetChanged();
-
+                    freshData(data);
+                    saveIntoFile(data);
                     break;
                 }
+        }
+    }
 
+    /**
+     * 刷新数据
+     *
+     * @param data 数据
+     */
+    private void freshData(Intent data) {
+        HomeWork homeWork = new HomeWork();
+        homeWork.setContent(data.getStringExtra("homework_content"));
+        homeWork.setDeadline(data.getStringExtra("homework_deadline"));
+        homeWork.setWayOfHandOn(data.getStringExtra("homework_handon"));
+        mList.add(homeWork);
+        count = mList.size();
+        Log.d(TAG, "freshData: " + mList.size());
+        mAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * 存储进内部储存
+     *
+     * @param data 数据
+     */
+    private void saveIntoFile(Intent data) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(data.getStringExtra("homework_content")).append("\n")
+                .append(data.getStringExtra("homework_deadline")).append("\n")
+                .append(data.getStringExtra("homework_handon")).append("\n");
+        Log.d(TAG, stringBuilder.toString());
+        FileOutputStream out;
+        BufferedWriter writer = null;
+        String fileName = "hw_" + count;
+        try {
+            out = openFileOutput(fileName, Context.MODE_PRIVATE);
+            writer = new BufferedWriter(new OutputStreamWriter(out));
+            writer.write(stringBuilder.toString());
+            Log.d(TAG, "saveIntoFile: 文件创建成功");
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "sameIntoFile: 文件创建失败");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (writer != null) {
+                    writer.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 从文件读取数据
+     */
+    private void loadFormFile() {
+        FileInputStream in;
+        BufferedReader reader = null;
+        String filename;
+        HomeWork homework;
+        for (int i = 1; i <= count; i++) {
+            filename = "hw_" + i;
+            try {
+                in = openFileInput(filename);
+                reader = new BufferedReader(new InputStreamReader(in));
+                homework = new HomeWork();
+                homework.setContent(reader.readLine());
+                Log.d(TAG, "loadFormFile: " + homework.getContent());
+                homework.setDeadline(reader.readLine());
+                Log.d(TAG, "loadFormFile: " + homework.getDeadline());
+                homework.setWayOfHandOn(reader.readLine());
+                Log.d(TAG, "loadFormFile: " + homework.getWayOfHandOn());
+                mList.add(homework);
+            } catch (FileNotFoundException e) {
+                Log.d("TAG", "文件读取失败，原因：文件" + filename + "不存在");
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (reader != null) {
+                        reader.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
