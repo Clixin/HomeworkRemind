@@ -30,3 +30,9 @@ An App can remind you homework
 1. 点击卡片查看详情
 2. 界面如下
 ![demo3.png](http://upload-images.jianshu.io/upload_images/1904896-ccb04900f0761e9c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+##版本0.05
+1. 重构代码，对作业的增删改操作提取出来
+2. 优化代码可读性
+3. 增加删除功能，但是有个bug，由于存储模块没设计好，删除文件还没搞定
+4. 增加修改功能，bug还没搞定

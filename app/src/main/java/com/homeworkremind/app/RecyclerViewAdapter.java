@@ -91,8 +91,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 bundle.putString("wayofhandon", homeWork.getWayOfHandOn());
                 bundle.putString("course", homeWork.getCourse());
                 bundle.putInt("current_position", i);
-                detailDialogFragment = new DetailDialogFragment();
-                detailDialogFragment.setArguments(bundle);//通过bundle来向fragment传递数据
+                detailDialogFragment = DetailDialogFragment.getInstance(bundle);
                 detailDialogFragment.show(mainActivity.getSupportFragmentManager(), "detailDialogFragment");
             }
         });

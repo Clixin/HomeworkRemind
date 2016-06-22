@@ -6,4 +6,5 @@
     <color name="windowBackground">#F2F2F2</color>
     <color name="white">#FFF</color>
     <color name="black">#000</color>
+    <color name="gray">#EEE</color>
 </resources>

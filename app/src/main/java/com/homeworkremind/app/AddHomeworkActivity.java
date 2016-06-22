@@ -165,7 +165,7 @@ public class AddHomeworkActivity extends AppCompatActivity implements View.OnCli
     /**
      * 显示日期选择对话框,手动选择截止日期
      */
-    private void showDatePicker() {
+    public void showDatePicker() {
         new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {

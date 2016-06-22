@@ -1,29 +1,39 @@
 package com.homeworkremind.app;
 
+import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.SharedElementCallback;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
+
+import java.util.Calendar;
 
 
 /**
  * 显示作业详情对话框
  * Created by Clixin on 2016/6/20.
  */
-public class DetailDialogFragment extends DialogFragment implements View.OnClickListener{
+public class DetailDialogFragment extends DialogFragment implements View.OnClickListener {
 
-    /**
-     * 左上角，详情
-     */
-    TextView detailTextView;
     /**
      * 右上角，课程名
      */
@@ -62,9 +72,26 @@ public class DetailDialogFragment extends DialogFragment implements View.OnClick
     TextView detailCancel;
 
     /**
+     * 父布局，用来是EditText失去焦点
+     */
+    LinearLayout detailLinearLayout;
+
+    /**
+     * 是否修改，判断是否保存
+     */
+    boolean isDataChanged = false;
+
+    /**
      * 通过bundle传过来的数据，记录当前位置，用于删除
      */
     int position;
+
+    public static DetailDialogFragment getInstance(Bundle bundle) {
+        DetailDialogFragment detailDialogFragment = new DetailDialogFragment();
+        detailDialogFragment.setArguments(bundle);
+        return detailDialogFragment;
+    }
+
 
     /**
      * Fragment生命周期函数，
@@ -122,7 +149,7 @@ public class DetailDialogFragment extends DialogFragment implements View.OnClick
         if(view == null) {
             return;
         }
-        detailTextView = (TextView) view.findViewById(R.id.detail_text_view);
+        detailLinearLayout = (LinearLayout) view.findViewById(R.id.detail_linear_layout);
         detailCourse = (TextView) view.findViewById(R.id.detail_course);
         detailEditContentLayout = (TextInputLayout) view.findViewById(R.id.detail_edit_content_layout);
         detailEditContent = detailEditContentLayout.getEditText();
@@ -132,22 +159,50 @@ public class DetailDialogFragment extends DialogFragment implements View.OnClick
         detailDelete = (TextView) view.findViewById(R.id.detail_delete);
         detailCancel = (TextView) view.findViewById(R.id.detail_cancel);
         detailSave = (TextView) view.findViewById(R.id.detail_save);
+        detailDateTextView.setOnClickListener(this);
+        detailTimeTextView.setOnClickListener(this);
+        detailWayOfHandOn.setOnClickListener(this);
         detailDelete.setOnClickListener(this);
         detailCancel.setOnClickListener(this);
         detailSave.setOnClickListener(this);
+        detailEditContent.setOnClickListener(this);
 
     }
 
 
+    /**
+     * 点击事件处理
+     * @param view 当前View
+     */
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.detail_edit_content :
+                Log.d("DetailDialogFragment", "onClick: pressed" );
+                dataChanged();
+                break;
+            case R.id.detail_date_text_view :
+                setEditTextDisableFocus();
+                showDatePicker();
+                dataChanged();
+                break;
+            case R.id.detail_time_text_view :
+                setEditTextDisableFocus();
+                showTimePicker();
+                dataChanged();
+                break;
+            case R.id.detail_way_of_hand_on :
+                showCheckBox();
+                setEditTextDisableFocus();
+                dataChanged();
+                break;
             case R.id.detail_delete :
+                HomeworkUtil.removeFormList(position);
                 dismiss();
-                Snackbar.make(view, "已删除", Snackbar.LENGTH_LONG).setAction("撤销", new View.OnClickListener() {
+                Snackbar.make(getActivity().getCurrentFocus(), "已删除", Snackbar.LENGTH_LONG).setAction("撤销", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        //// TODO: 2016/6/20 撤销操作
+                       //// TODO: 2016/6/20 撤销操作
                     }
                 }).show();
 
@@ -156,8 +211,104 @@ public class DetailDialogFragment extends DialogFragment implements View.OnClick
                 dismiss();
                 break;
             case R.id.detail_save :
-                //// TODO: 2016/6/20  保存操作，需要权限
+                if(isDataChanged) {
+                    save();
+                    dismiss();
+                } else {
+                    dismiss();
+                    Snackbar.make(getActivity().getCurrentFocus(), "没有修改保存", Snackbar.LENGTH_SHORT).show();
+                }
                 break;
         }
     }
+
+    /**
+     * 判断是否修改
+     */
+    private void dataChanged() {
+        if(!isDataChanged) {
+            isDataChanged = true;
+        }
+    }
+
+    /**
+     * 显示日期选择对话框,手动编辑截止日期
+     */
+    private void showDatePicker() {
+        new DatePickerDialog(getActivity(),new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
+                detailDateTextView.setText(year + "年" + (monthOfYear + 1) + "月" + dayOfMonth + "日" + "\t");
+                detailDateTextView.setTextSize(16);
+                detailDateTextView.setTextColor(getResources().getColor(R.color.colorAccent));
+            }
+        },
+                Calendar.getInstance().get(Calendar.YEAR),
+                Calendar.getInstance().get(Calendar.MONTH),
+                Calendar.getInstance().get(Calendar.DAY_OF_MONTH)).show();
+    }
+
+    /**
+     * 显示时间选择对话框，手动修改截止时间
+     */
+    private void showTimePicker() {
+        new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+
+            @Override
+            public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+                String h = "" + hourOfDay;
+                String m = "" + minute;
+                if (hourOfDay < 10) {
+                    h = "0" + hourOfDay;
+                }
+                if (minute < 10) {
+                    m = "0" + minute;
+                }
+                detailTimeTextView.setText(h + ":" + m + "\t");
+                detailTimeTextView.setTextSize(16);
+                detailTimeTextView.setTextColor(getResources().getColor(R.color.colorAccent));
+            }
+        },
+                Calendar.getInstance().get(Calendar.HOUR_OF_DAY),
+                Calendar.getInstance().get(Calendar.MINUTE), true).show();
+    }
+
+    /**
+     * 显示选择提交方式多选
+     */
+    private void showCheckBox() {
+        Bundle bundle = new Bundle();
+        bundle.putString("way_of_handon", detailWayOfHandOn.getText().toString());
+        CheckBoxDialogFragment checkBoxDialogFragment = CheckBoxDialogFragment.getInstance(bundle);
+        checkBoxDialogFragment.setCallBackListener(new CheckBoxDialogFragment.CallBackListener() {
+            @Override
+            public void onDataChange(String s) {
+                detailWayOfHandOn.setText(s);
+            }
+        });
+        checkBoxDialogFragment.show(getActivity().getSupportFragmentManager(), "checkBoxDialogFragment");
+
+    }
+
+    /**
+     * 让EditText失去焦点，并隐藏输入法
+     */
+    private void setEditTextDisableFocus() {
+        detailLinearLayout.requestFocus();
+        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(detailEditContent.getWindowToken(), 0);
+    }
+
+    /**
+     * 保存修改Homework
+     */
+    private void save() {
+        HomeWork homework = HomeworkUtil.getCurrentPositionHomework(position);
+        homework.setContent(detailEditContent.getText().toString());
+        homework.setWayOfHandOn(detailWayOfHandOn.getText().toString());
+        homework.setDeadline(detailDateTextView.getText().toString() + detailTimeTextView.getText().toString());
+        HomeworkUtil.freshData();
+
+    }
+
 }
