@@ -1,18 +1,11 @@
 package com.homeworkremind.app;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.TextView;
 
 import java.util.List;
@@ -27,12 +20,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     /**
      * 填充数据
      */
-    List<HomeWork> mList;
+    List<Homework> mList;
 
     /**
      * 初始化Homework
      */
-    HomeWork homeWork;
+    Homework homework;
 
     /**
      * 持有MainActivity的引用
@@ -49,7 +42,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
      *
      * @param mList 数据
      */
-    public RecyclerViewAdapter(List<HomeWork> mList, MainActivity mainActivity) {
+    public RecyclerViewAdapter(List<Homework> mList, MainActivity mainActivity) {
         this.mList = mList;
         this.mainActivity = mainActivity;
     }
@@ -76,7 +69,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
      */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final int i = position;
+        final int i = holder.getAdapterPosition();
         holder.cDeadlineText.setText(mList.get(position).getDeadline());
         holder.cCourseNameText.setText(mList.get(position).getCourse());
         holder.cHandOnText.setText(mList.get(position).getWayOfHandOn());
@@ -85,11 +78,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             @Override
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
-                homeWork = mList.get(i);
-                bundle.putString("content", homeWork.getContent());
-                bundle.putString("deadline", homeWork.getDeadline());
-                bundle.putString("wayofhandon", homeWork.getWayOfHandOn());
-                bundle.putString("course", homeWork.getCourse());
+                homework = mList.get(i);
+                bundle.putString("content", homework.getContent());
+                bundle.putString("deadline", homework.getDeadline());
+                bundle.putString("wayofhandon", homework.getWayOfHandOn());
+                bundle.putString("course", homework.getCourse());
                 bundle.putInt("current_position", i);
                 detailDialogFragment = DetailDialogFragment.getInstance(bundle);
                 detailDialogFragment.show(mainActivity.getSupportFragmentManager(), "detailDialogFragment");

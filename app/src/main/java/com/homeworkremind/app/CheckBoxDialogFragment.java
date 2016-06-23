@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +18,33 @@ import android.widget.TextView;
  */
 public class CheckBoxDialogFragment extends DialogFragment implements View.OnClickListener{
 
+    /**
+     * 电子档复选框
+     */
     CheckBox changeEWord;
+    /**
+     * 纸质档复选框
+     */
     CheckBox changePWord;
+    /**
+     * 传文件复选框
+     */
     CheckBox changeViaFile;
+    /**
+     * 发邮件复选框
+     */
     CheckBox changeViaEmail;
+    /**
+     * 确定按钮
+     */
     TextView changeConfirm;
+    /**
+     * 取消按钮
+     */
     TextView changeCancel;
+    /**
+     * 回调监听接口
+     */
     CallBackListener callBackListener;
 
     /**
@@ -70,6 +90,10 @@ public class CheckBoxDialogFragment extends DialogFragment implements View.OnCli
         }
     }
 
+    /**
+     * 初始化界面
+     * @param view 当前view
+     */
     private void init(View view) {
         if(view == null) {
             return;
@@ -126,6 +150,9 @@ public class CheckBoxDialogFragment extends DialogFragment implements View.OnCli
         if (changePWord.isChecked()) {
             s += changePWord.getText().toString() + "\t";
         }
+        if(s.isEmpty()) {
+            s += "提交方式未定";
+        }
 
         return s;
     }
@@ -140,6 +167,10 @@ public class CheckBoxDialogFragment extends DialogFragment implements View.OnCli
     }
 
 
+    /**
+     * 处理点击事件
+     * @param view 当前view
+     */
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -154,10 +185,17 @@ public class CheckBoxDialogFragment extends DialogFragment implements View.OnCli
 
     }
 
+    /**
+     * 对外开放设置监听接口
+     * @param callBackListener 监听接口
+     */
     public void setCallBackListener(CallBackListener callBackListener) {
         this.callBackListener = callBackListener;
     }
 
+    /**
+     * 回调坚挺接口
+     */
     interface CallBackListener {
         void onDataChange(String s);
     }

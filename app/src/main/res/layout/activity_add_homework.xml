@@ -20,18 +20,26 @@
             android:background="?attr/colorPrimary"
             app:title="发布作业" />
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/edit_content_layout"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/add_homework_padding">
-
-            <EditText
-                android:id="@+id/edit_content"
+            android:focusableInTouchMode="true">
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/edit_content_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/homework_content" />
-        </android.support.design.widget.TextInputLayout>
+                android:padding="@dimen/add_homework_padding">
+
+                <EditText
+                    android:id="@+id/edit_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/homework_content" />
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+
 
     </android.support.design.widget.AppBarLayout>
 

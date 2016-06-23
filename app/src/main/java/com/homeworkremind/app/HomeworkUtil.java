@@ -57,37 +57,40 @@ public class HomeworkUtil {
 
     /**
      * 添加到列表
-     * @param mList 当前列表
-     * @param homeWork 要添加的对象
+     *
+     * @param homework 要添加的对象
      */
-    public static void addToList(List<HomeWork> mList, HomeWork homeWork) {
-        mList.add(homeWork);
+    public static void addToList(Homework homework) {
+        MainActivity.mList.add(homework);
     }
+
+    /**
+     * 重新添加进list，执行撤销操作后执行
+     * @param position 从哪删的，就从哪出现
+     * @param homework 对象
+     */
+    public static void reAddToList(int position, Homework homework) {
+        MainActivity.mList.add(position, homework);
+    }
+
 
     /**
      * 从列表移除
      * @param position 对象在列表中的下标
-     * @return
+     *
      */
-    public static boolean removeFormList(int position) {
+    public static void removeFormList(int position) {
         MainActivity.mList.remove(position);
         MainActivity.mAdapter.notifyDataSetChanged();
-        deleteFromFile(position);
-       // MainActivity.mAdapter.showSnackBar();
-        return true;
     }
 
     /**
      * 刷新数据
      * @param mList 当前列表
-     * @param data 数据
+     * @param homework 数据
      */
-    public static void freshData(List<HomeWork> mList, Intent data) {
-        HomeWork homeWork = new HomeWork();
-        homeWork.setContent(data.getStringExtra("homework_content"));
-        homeWork.setDeadline(data.getStringExtra("homework_deadline"));
-        homeWork.setWayOfHandOn(data.getStringExtra("homework_handon"));
-        addToList(mList, homeWork);
+    public static void freshData(List<Homework> mList, Homework homework) {
+        addToList(homework);
         Log.d(TAG, "freshData: " + mList.size());
         freshData();
     }
@@ -99,87 +102,12 @@ public class HomeworkUtil {
         MainActivity.mAdapter.notifyDataSetChanged();
     }
 
-
-
     /**
-     * 从文件读取数据
+     * 得到当前位置的homework
+     * @param position 位置
+     * @return 返回一个homework
      */
-    public static List<HomeWork> loadFormFile(Context context, List<HomeWork> mList) {
-        FileInputStream in;
-        BufferedReader reader = null;
-        String fileName;
-        HomeWork homework;
-        for (int i = 1; i <= count; i++) {
-            fileName = "hw_" + i;
-            try {
-                in = context.openFileInput(fileName);
-                reader = new BufferedReader(new InputStreamReader(in));
-                homework = new HomeWork();
-                homework.setContent(reader.readLine());
-                homework.setDeadline(reader.readLine());
-                homework.setWayOfHandOn(reader.readLine());
-                addToList(mList, homework);
-            } catch (FileNotFoundException e) {
-                Log.d(TAG, "文件读取失败，原因：文件" + fileName + "不存在");
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    if (reader != null) {
-                        reader.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return mList;
-    }
-
-    public static void deleteFromFile(int position) {
-        String fileName = "hw_" + position;
-        File file = new File(fileName);
-        if (file.exists())
-            file.delete();
-
-    }
-
-    /**
-     * 存储进内部储存
-     *
-     * @param data 数据
-     */
-    public static void saveIntoFile(Context context, List<HomeWork> mList, Intent data) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(data.getStringExtra("homework_content")).append("\n")
-                .append(data.getStringExtra("homework_deadline")).append("\n")
-                .append(data.getStringExtra("homework_handon")).append("\n");
-        Log.d(TAG, stringBuilder.toString());
-        FileOutputStream out;
-        BufferedWriter writer = null;
-        count = mList.size();
-        String fileName = "hw_" + count;
-        try {
-            out = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-            writer = new BufferedWriter(new OutputStreamWriter(out));
-            writer.write(stringBuilder.toString());
-            Log.d(TAG, "saveIntoFile: 文件创建成功");
-        } catch (FileNotFoundException e) {
-            Log.d(TAG, "sameIntoFile: 文件创建失败");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (writer != null) {
-                    writer.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public static HomeWork getCurrentPositionHomework(int position) {
+    public static Homework getCurrentPositionHomework(int position) {
         return MainActivity.mList.get(position);
     }
 

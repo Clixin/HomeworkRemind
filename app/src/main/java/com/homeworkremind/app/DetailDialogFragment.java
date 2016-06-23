@@ -4,18 +4,13 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.SharedElementCallback;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -86,6 +81,11 @@ public class DetailDialogFragment extends DialogFragment implements View.OnClick
      */
     int position;
 
+    /**
+     * 构造一个可以传递数据
+     * @param bundle 传递的数据
+     * @return 返回一个实例
+     */
     public static DetailDialogFragment getInstance(Bundle bundle) {
         DetailDialogFragment detailDialogFragment = new DetailDialogFragment();
         detailDialogFragment.setArguments(bundle);
@@ -103,7 +103,7 @@ public class DetailDialogFragment extends DialogFragment implements View.OnClick
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_homework_detail, container);
         init(view);
         detailEditContent.setText(getArguments().getString("content"));
@@ -122,7 +122,7 @@ public class DetailDialogFragment extends DialogFragment implements View.OnClick
      * @param s homework的deadline
      */
     private void dealTime(String s) {
-        Log.d("Detail", "" + s.length());
+
         String date = s.substring(0,s.length() - 6);
         String time = s.substring(s.length() - 6);
         detailDateTextView.setText(date);
@@ -146,7 +146,7 @@ public class DetailDialogFragment extends DialogFragment implements View.OnClick
      * @param view 传入的view
      */
     private void init(View view) {
-        if(view == null) {
+        if (view == null) {
             return;
         }
         detailLinearLayout = (LinearLayout) view.findViewById(R.id.detail_linear_layout);
@@ -159,16 +159,29 @@ public class DetailDialogFragment extends DialogFragment implements View.OnClick
         detailDelete = (TextView) view.findViewById(R.id.detail_delete);
         detailCancel = (TextView) view.findViewById(R.id.detail_cancel);
         detailSave = (TextView) view.findViewById(R.id.detail_save);
+        detailEditContent.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                dataChanged();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
         detailDateTextView.setOnClickListener(this);
         detailTimeTextView.setOnClickListener(this);
         detailWayOfHandOn.setOnClickListener(this);
         detailDelete.setOnClickListener(this);
         detailCancel.setOnClickListener(this);
         detailSave.setOnClickListener(this);
-        detailEditContent.setOnClickListener(this);
-
     }
-
 
     /**
      * 点击事件处理
@@ -177,10 +190,6 @@ public class DetailDialogFragment extends DialogFragment implements View.OnClick
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.detail_edit_content :
-                Log.d("DetailDialogFragment", "onClick: pressed" );
-                dataChanged();
-                break;
             case R.id.detail_date_text_view :
                 setEditTextDisableFocus();
                 showDatePicker();
@@ -197,14 +206,17 @@ public class DetailDialogFragment extends DialogFragment implements View.OnClick
                 dataChanged();
                 break;
             case R.id.detail_delete :
+                final Homework homework = HomeworkUtil.getCurrentPositionHomework(position);
                 HomeworkUtil.removeFormList(position);
                 dismiss();
                 Snackbar.make(getActivity().getCurrentFocus(), "已删除", Snackbar.LENGTH_LONG).setAction("撤销", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                       //// TODO: 2016/6/20 撤销操作
+                        HomeworkUtil.reAddToList(position, homework);
+                        HomeworkUtil.freshData();
                     }
                 }).show();
+                //// TODO: 2016/6/23 没有撤销操作后，直接删除
 
                 break;
             case R.id.detail_cancel :
@@ -216,7 +228,7 @@ public class DetailDialogFragment extends DialogFragment implements View.OnClick
                     dismiss();
                 } else {
                     dismiss();
-                    Snackbar.make(getActivity().getCurrentFocus(), "没有修改保存", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(getActivity().getCurrentFocus(), "没有修改需要保存", Snackbar.LENGTH_SHORT).show();
                 }
                 break;
         }
@@ -284,6 +296,8 @@ public class DetailDialogFragment extends DialogFragment implements View.OnClick
             @Override
             public void onDataChange(String s) {
                 detailWayOfHandOn.setText(s);
+                detailWayOfHandOn.setTextSize(16);
+                detailWayOfHandOn.setTextColor(getResources().getColor(R.color.colorAccent));
             }
         });
         checkBoxDialogFragment.show(getActivity().getSupportFragmentManager(), "checkBoxDialogFragment");
@@ -303,10 +317,11 @@ public class DetailDialogFragment extends DialogFragment implements View.OnClick
      * 保存修改Homework
      */
     private void save() {
-        HomeWork homework = HomeworkUtil.getCurrentPositionHomework(position);
+        Homework homework = HomeworkUtil.getCurrentPositionHomework(position);
         homework.setContent(detailEditContent.getText().toString());
         homework.setWayOfHandOn(detailWayOfHandOn.getText().toString());
         homework.setDeadline(detailDateTextView.getText().toString() + detailTimeTextView.getText().toString());
+        SharedPreferencesUtil.saveChangedHomework(getContext(), homework);
         HomeworkUtil.freshData();
 
     }

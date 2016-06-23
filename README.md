@@ -36,3 +36,10 @@ An App can remind you homework
 2. 优化代码可读性
 3. 增加删除功能，但是有个bug，由于存储模块没设计好，删除文件还没搞定
 4. 增加修改功能，bug还没搞定
+
+##版本0.06
+1. 改用SharedPreferences来存储
+2. 首先存储Homework的id
+3. 再根据id单独存储Homwork里的内容
+4. 读取的时候，先读取ID，再根据id读取里面内容
+5. 重构代码

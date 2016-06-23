@@ -237,6 +237,9 @@ public class AddHomeworkActivity extends AppCompatActivity implements View.OnCli
         if (pWordCheckBox.isChecked()) {
             s += pWordCheckBox.getText().toString() + "\t";
         }
+        if(s.isEmpty()) {
+            s += "提交方式未定";
+        }
 
         return s;
     }

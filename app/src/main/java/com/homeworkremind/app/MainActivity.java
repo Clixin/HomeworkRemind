@@ -4,7 +4,6 @@ package com.homeworkremind.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,12 +23,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * 用于储存Homework
      */
-    static List<HomeWork> mList;
-
-    /**
-     * 用于判断初始化界面，只用加载一次
-     */
-    boolean initOnce = false;
+    static List<Homework> mList;
 
     /**
      * 可滚动View，极高自定义
@@ -47,45 +40,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(this);
-        Log.d(TAG, "onCreate: 启动起来了");
-
 
         initData();
-        initView();
-    }
 
-    /**
-     * 初始化数据，这里仅作于调试用，将来数据是从本地或者服务器上获取
-     */
-    private void initData() {
-        mList = new ArrayList<HomeWork>();
-        HomeWork homeWork_1 = new HomeWork("2016年6月17日", "文化产业概论", "QQ文件", "期末论文，300字");
-        HomeWork homeWork_2 = new HomeWork("2016年6月18日", "比较文学", "邮箱", "期末论文，300字");
-        mList.add(homeWork_1);
-        mList.add(homeWork_2);
-        HomeworkUtil.getInstance();
-        mList = HomeworkUtil.loadFormFile(this, mList);
-        Log.d(TAG, "initData: " + mList.size());
-    }
-
-    /**
-     * 初始化View
-     */
-    private void initView() {
-        if(initOnce) {
-            return;
-        }
         mRecyclerView = (RecyclerView) findViewById(R.id.base_swipe_list);
         mAdapter = new RecyclerViewAdapter(mList, this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mAdapter);
-        initOnce = true;
+    }
+
+    /**
+     * 初始化数据，从本地获取数据
+     */
+    private void initData() {
+        mList = SharedPreferencesUtil.loadHomeworks(this, getCurrentFocus());
+        Log.d(TAG, "initData: " + mList.size());
     }
 
     /**
@@ -134,8 +109,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (requestCode) {
             case 1:
                 if (resultCode == RESULT_OK) {
-                    HomeworkUtil.freshData(mList, data);
-                    HomeworkUtil.saveIntoFile(this, mList, data);
+
+                    Homework homework = new Homework();
+                    homework.setContent(data.getStringExtra("homework_content"));
+                    homework.setDeadline(data.getStringExtra("homework_deadline"));
+                    homework.setWayOfHandOn(data.getStringExtra("homework_handon"));
+
+                    SharedPreferencesUtil.saveHomework(this, homework);//保存进SharePreferences
+                    HomeworkUtil.freshData(mList, homework);
                     break;
                 }
         }
